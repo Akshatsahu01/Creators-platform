@@ -1,0 +1,16 @@
+{
+  "name": "creators-platform",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "client": "npm run dev --prefix client",
+    "server": "nodemon server/server.js",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "install-all": "npm install && npm install --prefix client",
+    "start": "node server/server.js"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.1.14"
+  }
+}
