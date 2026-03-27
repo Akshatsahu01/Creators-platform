@@ -3,9 +3,12 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import User from './src/models/UserSchema.js';
 import mongoose from 'mongoose';
+import authrouter from './routes/authRoutes.js';
+
 
 // Load environment variables
 dotenv.config();
+dotenv.config({ path: "./server/.env" });
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -27,6 +30,7 @@ connectdb();
 app.get('/api/health', (req, res) => {
   res.json({ message: 'Server is running!' });
 });
+app.use("/api/auth",authrouter)
 app.post('/api/users/register',async (req,res)=>{
     try{
       const {name,email,password}= req.body;
