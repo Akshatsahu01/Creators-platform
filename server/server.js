@@ -7,7 +7,7 @@ import authrouter from './routes/authRoutes.js';
 
 
 // Load environment variables
-dotenv.config();
+// dotenv.config();
 dotenv.config({ path: "./server/.env" });
 
 const app = express();
@@ -47,6 +47,11 @@ app.post('/api/users/register',async (req,res)=>{
     });
   }
 })
+// app.post("/api/auth/login",async (req,res)=>{
+//   console.log(req.body)
+//   console.log("Hello")
+//   res.status(200).json({message:"I am checking what on going here"})
+// })
 
 // Start server
 app.listen(PORT, () => {
