@@ -4,6 +4,8 @@ import cors from 'cors';
 import User from './src/models/UserSchema.js';
 import mongoose from 'mongoose';
 import authrouter from './routes/authRoutes.js';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
 
 
 // Load environment variables
@@ -11,6 +13,7 @@ import authrouter from './routes/authRoutes.js';
 dotenv.config({ path: "./server/.env" });
 
 const app = express();
+const httpServer = createServer(app); ///for websocket
 const PORT = process.env.PORT || 5000;
 
 // Middleware
@@ -18,6 +21,14 @@ app.use(cors({
   origin:process.env.CLIENT_URL,
   credentials:true,
 }));
+
+const io = new Server(httpServer, {  ////for websocket
+  cors: {
+    origin: process.env.CLIENT_URL || 'http://localhost:5173',
+    methods: ['GET', 'POST'],
+    credentials: true
+  }
+});
 const connectdb=async ()=>{
   await mongoose.connect("mongodb+srv://Akshat:Akshat@cluster01.tidcpbg.mongodb.net/Creators-platform?appName=Cluster01")
   console.log("Connected to mongodb")
@@ -54,6 +65,24 @@ app.post('/api/users/register',async (req,res)=>{
 // })
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+
+// Socket.io connection handling
+io.on('connection', (socket) => {
+  console.log(`✅ User connected: ${socket.id}`);
+
+  // Handle disconnection
+  socket.on('disconnect', (reason) => {
+    console.log(`❌ User disconnected: ${socket.id} (${reason})`);
+  });
+});
+
+
+// app.listen(PORT, () => {
+//   console.log(`Server running on port ${PORT}`);
+// });
+
+// To this:
+httpServer.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`🔌 Socket.io ready for connections`);
 });
