@@ -6,7 +6,8 @@ import mongoose from 'mongoose';
 import authrouter from './routes/authRoutes.js';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-
+import jwt from "jsonwebtoken"
+import uploadRoutes from "./routes/upload.js"
 
 // Load environment variables
 // dotenv.config();
@@ -37,6 +38,28 @@ app.use(express.json());
 
 connectdb();
 
+io.use((socket, next) => {
+  const token = socket.handshake.auth.token;
+
+  if (!token) {
+    return next(new Error('Authentication error: No token provided'));
+  }
+
+  // Verify the token here using jwt.verify()
+  // If valid: call next()
+  // If invalid: call next(new Error('Authentication error'))
+  try{
+    const decoded=jwt.verify(token,process.env.JWT_SECRET);
+    socket.data.user=decoded
+    next()
+  }catch(error){
+    next(new Error('Authentication error'))
+  }
+
+
+
+});
+
 // Test route
 app.get('/api/health', (req, res) => {
   res.json({ message: 'Server is running!' });
@@ -58,6 +81,8 @@ app.post('/api/users/register',async (req,res)=>{
     });
   }
 })
+app.use('/api/upload',uploadRoutes)
+
 // app.post("/api/auth/login",async (req,res)=>{
 //   console.log(req.body)
 //   console.log("Hello")
@@ -68,7 +93,7 @@ app.post('/api/users/register',async (req,res)=>{
 
 // Socket.io connection handling
 io.on('connection', (socket) => {
-  console.log(`✅ User connected: ${socket.id}`);
+  console.log(`✅ User connected: ${socket.id} || user: ${JSON.stringify(socket.data.user.email)}`);
 
   // Handle disconnection
   socket.on('disconnect', (reason) => {

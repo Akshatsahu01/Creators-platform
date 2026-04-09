@@ -79,7 +79,7 @@
 
 // import {useAuth}  from "../context/AuthContext";
 import { useAuth } from "../../context/AuthContext";
-import socket from "../../services/socket"
+import socket,{connectSocket} from "../../services/socket"
 import { useEffect } from "react";
 
 const Dashboard = () => {
@@ -87,11 +87,11 @@ const Dashboard = () => {
 
     useEffect(() => {
     // Connect when component mounts (user is logged in)
-    socket.connect();
+    connectSocket();
 
     // Listen for successful connection
     socket.on('connect', () => {
-      console.log('🔌 Socket connected:', socket.id);
+      console.log(`🔌 Socket connected:' ${socket.id} || socket : ${socket.data.user.token}`);
     });
 
     // Listen for disconnection
@@ -101,7 +101,7 @@ const Dashboard = () => {
 
     // Listen for connection errors
     socket.on('connect_error', (error) => {
-      console.error('Socket connection error:', error.message);
+      console.error('Socket connection error :', error.message);
     });
 
     // Cleanup when component unmounts
