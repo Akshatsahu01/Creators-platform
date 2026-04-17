@@ -7,7 +7,8 @@ import authrouter from './routes/authRoutes.js';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import jwt from "jsonwebtoken"
-import uploadRoutes from "./routes/upload.js"
+import uploadRoutes from "./routes/upload.js";
+import postroute from "./routes/PostRoute.js"
 
 // Load environment variables
 // dotenv.config();
@@ -61,10 +62,14 @@ io.use((socket, next) => {
 });
 
 // Test route
+app.get("/",(req,res)=>{
+  res.status(200).json({Message:"welcome to home page"})
+})
 app.get('/api/health', (req, res) => {
   res.json({ message: 'Server is running!' });
 });
 app.use("/api/auth",authrouter)
+app.use("/post",postroute)
 app.post('/api/users/register',async (req,res)=>{
     try{
       const {name,email,password}= req.body;
