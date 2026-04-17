@@ -1,6 +1,7 @@
 import ImageUpload from "../common/ImageUpload";
 
 
+
 const CreatePost = () => {
 
   const handleUpload = (formData) => {
@@ -12,8 +13,10 @@ const CreatePost = () => {
   return (
     <div>
       <h1>Create Post</h1>
+    
       <ImageUpload onUpload={handleUpload} />
       {/* rest of your form */}
+
     </div>
   );
 };
