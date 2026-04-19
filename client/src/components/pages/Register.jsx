@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import api from '../../services/api';
 
 const Register = () => {
   // Form field states
@@ -99,15 +100,19 @@ const handleSubmit = async (e) => {
     };
 
     // Send POST request to backend
-    const response = await fetch('/api/users/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(registrationData)
-    });
+    const response = await api.post('/api/users/register', 
+      // method: 'POST',
+      // headers: {
+      //   'Content-Type': 'application/json',
+      // },
+      // body: JSON.stringify(registrationData)
+      registrationData
+    );
 
-    const data = await response.json();
+    const data = response.data;
+       if (!data.success) {
+      throw new Error(data.message || 'Registration failed');
+    }
 
     if (response.ok) {
       // Registration successful

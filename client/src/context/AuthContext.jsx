@@ -1,4 +1,5 @@
 import { useEffect,useState,useContext,createContext } from "react";
+import api from "../services/api";
 const AuthContext=createContext(null);
 export const AuthProvider=(props)=>{
     const [user,setUser]=useState(null);
@@ -24,19 +25,23 @@ const login=async(email,password)=>{
    
     try{
         setIsLoading(true);
-        const response=await fetch('/api/auth/login',{
-            method:"POST",
-            headers:{
-                'Content-Type':'application/json',
-            },
-            body:JSON.stringify({email,password})
-        })
-        // const data=await response.json();
-        if (!response.ok) {
-  throw new Error("Server error"); 
-}
-
-const data = await response.json();
+        const response=await api.post('/api/auth/login',{
+            // method:"POST",
+            // headers:{
+            //     'Content-Type':'application/json',
+            // },
+            // body:JSON.stringify({email,password})
+            //
+            //With using axios api
+            //
+            email,password
+        }) 
+        // if (!response.ok) {              //axios does not have response.ok
+        //     throw new Error("Server error"); 
+        // }
+        
+// const data=await response.json();
+const data = response.data;
 
 
         if(!data.success){

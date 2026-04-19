@@ -80,19 +80,22 @@
 // import {useAuth}  from "../context/AuthContext";
 import { useAuth } from "../../context/AuthContext";
 import socket,{connectSocket} from "../../services/socket"
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import api from "../../services/api";
 
 const Dashboard = () => {
   const { user, logout, isLoading } = useAuth();
+  const [posts, setPosts] = useState([]);
 
     useEffect(() => {
     // Connect when component mounts (user is logged in)
     connectSocket();
-
+    
     // Listen for successful connection
+    
     socket.on('connect', () => {
-      console.log(`🔌 Socket connected:' ${socket.id} || socket : ${socket.data.user.token}`);
+      console.log(`🔌 Socket connected:' ${socket.id} || user : ${user?.email}`);
     });
 
     // Listen for disconnection
@@ -112,6 +115,20 @@ const Dashboard = () => {
       socket.off('connect_error');
       socket.disconnect();
     };
+  }, []);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const res = await api.get('/post');
+        // assume server returns array in res.data
+        setPosts(res.data || []);
+      } catch (err) {
+        console.error('Failed to fetch posts:', err);
+      }
+    };
+
+    fetchPosts();
   }, []);
 
   if (isLoading) {
@@ -151,6 +168,24 @@ const Dashboard = () => {
             <li>Edit your profile</li>
             <li>See your activity</li>
           </ul>
+        </div>
+
+        <div style={cardStyle}>
+          <h2>Recent Posts</h2>
+          {posts.length === 0 ? (
+            <p>No posts yet.</p>
+          ) : (
+            <ul>
+              {posts.map((post) => (
+                <li key={post._id || post.id} style={{ marginBottom: '0.5rem' }}>
+                  <strong>{post.title || post.caption || 'Untitled'}</strong>
+                  <div style={{ fontSize: '0.9rem', color: '#666' }}>
+                    {post.description || post.content || ''}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
     </div>
