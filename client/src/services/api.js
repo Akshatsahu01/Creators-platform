@@ -30,7 +30,7 @@ api.interceptors.response.use(
     },
     (error)=>{
         if(error.response?.status===401){
-            localStorage.removeItem('authtoken');
+            localStorage.removeItem('authToken');
             localStorage.removeItem('user');
             window.location.href="/login";
         }
