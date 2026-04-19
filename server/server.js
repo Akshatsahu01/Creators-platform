@@ -8,7 +8,8 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import jwt from "jsonwebtoken"
 import uploadRoutes from "./routes/upload.js";
-import postroute from "./routes/PostRoute.js"
+import postroute from "./routes/PostRoute.js";
+import uploadauth from './middleware/uploadauth-middleware.js';
 
 // Load environment variables
 // dotenv.config();
@@ -86,7 +87,7 @@ app.post('/api/users/register',async (req,res)=>{
     });
   }
 })
-app.use('/api/upload',uploadRoutes)
+app.use('/api/upload',uploadauth,uploadRoutes)
 
 // app.post("/api/auth/login",async (req,res)=>{
 //   console.log(req.body)
